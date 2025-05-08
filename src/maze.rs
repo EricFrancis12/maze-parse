@@ -1,6 +1,6 @@
 use std::{fs, path::Path, str::FromStr};
 
-use anyhow::{anyhow, Error, Result};
+use anyhow::{Error, Result};
 
 use crate::{
     cell::{Cell, CELL_CHAR_WIDTH, CELL_LINE_HEIGHT},
@@ -19,6 +19,14 @@ impl Maze {
     }
 
     pub fn parse_sm(s: impl Into<String>) -> Result<Self> {
+        Self::do_parse(s, 0)
+    }
+
+    pub fn parse_lg(s: impl Into<String>) -> Result<Self> {
+        Self::do_parse(s, 1)
+    }
+
+    fn do_parse(s: impl Into<String>, offset: isize) -> Result<Self> {
         let mut parser = ContentParser::new(s.into());
         let mut cells = Vec::new();
 
@@ -40,7 +48,7 @@ impl Maze {
                     .move_lines(-(CELL_LINE_HEIGHT as isize) + 1)
                     .expect("to be at the starting line");
 
-                if parser.move_cols(CELL_CHAR_WIDTH as isize).is_err() {
+                if parser.move_cols(CELL_CHAR_WIDTH as isize + offset).is_err() {
                     break;
                 }
                 parser
@@ -54,54 +62,15 @@ impl Maze {
                 .go_to_pos(starting_pos)
                 .expect("to be at the starting position");
 
-            if parser.move_lines(CELL_LINE_HEIGHT as isize).is_err() {
+            if parser
+                .move_lines(CELL_LINE_HEIGHT as isize + offset)
+                .is_err()
+            {
                 break;
             }
             parser
                 .move_lines(-1)
                 .expect("to be on the bottom edge of previous row");
-        }
-
-        Ok(Maze { cells })
-    }
-
-    pub fn parse_lg(s: impl Into<String>) -> Result<Self> {
-        let content = s.into();
-        let lines: Vec<&str> = content.lines().collect();
-
-        if lines.len() < CELL_LINE_HEIGHT {
-            return Err(anyhow!(
-                "Invalid maze: Expected number of lines to be greater than {}, but got: {}",
-                CELL_LINE_HEIGHT,
-                lines.len(),
-            ));
-        }
-
-        let line_length = lines[0].len();
-
-        // Calculate the number of rows and columns of cells
-        let rows = (lines.len() - 1) / CELL_LINE_HEIGHT;
-        let cols = (line_length - 1) / CELL_CHAR_WIDTH;
-
-        // Parse each cell and assemble the maze
-        let mut cells = Vec::new();
-        for row in 0..rows {
-            let mut cell_row = Vec::new();
-            for col in 0..cols {
-                // Extract the "square" for the current cell
-                let cell_str = (0..CELL_LINE_HEIGHT)
-                    .map(|i| {
-                        &lines[row * CELL_LINE_HEIGHT + i]
-                            [col * CELL_CHAR_WIDTH..(col + 1) * CELL_CHAR_WIDTH]
-                    })
-                    .collect::<Vec<&str>>()
-                    .join("\n");
-
-                // Parse the cell
-                let cell = cell_str.parse::<Cell>()?;
-                cell_row.push(cell);
-            }
-            cells.push(cell_row);
         }
 
         Ok(Maze { cells })
