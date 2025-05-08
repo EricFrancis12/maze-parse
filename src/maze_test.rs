@@ -2,25 +2,141 @@ use crate::{cell::Cell, maze::Maze};
 
 #[test]
 fn test_parse_sm_maze() {
-    let input = "\
+    let tests = vec![
+        (
+            "\
++   +
+  A  
++   +",
+            Maze {
+                cells: vec![vec![Cell {
+                    wall_top: false,
+                    wall_bottom: false,
+                    wall_left: false,
+                    wall_right: false,
+                    corner_top_left: true,
+                    corner_top_right: true,
+                    corner_bottom_left: true,
+                    corner_bottom_right: true,
+                    inner_text: String::from(" A "),
+                }]],
+            },
+        ),
+        (
+            "\
 +---+
 | A |
-+---+";
++---+",
+            Maze {
+                cells: vec![vec![Cell {
+                    wall_top: true,
+                    wall_bottom: true,
+                    wall_left: true,
+                    wall_right: true,
+                    corner_top_left: true,
+                    corner_top_right: true,
+                    corner_bottom_left: true,
+                    corner_bottom_right: true,
+                    inner_text: String::from(" A "),
+                }]],
+            },
+        ),
+        (
+            "\
++---+---+
+| A | B |
++---+---+",
+            Maze {
+                cells: vec![vec![
+                    Cell {
+                        wall_top: true,
+                        wall_bottom: true,
+                        wall_left: true,
+                        wall_right: true,
+                        corner_top_left: true,
+                        corner_top_right: true,
+                        corner_bottom_left: true,
+                        corner_bottom_right: true,
+                        inner_text: String::from(" A "),
+                    },
+                    Cell {
+                        wall_top: true,
+                        wall_bottom: true,
+                        wall_left: true,
+                        wall_right: true,
+                        corner_top_left: true,
+                        corner_top_right: true,
+                        corner_bottom_left: true,
+                        corner_bottom_right: true,
+                        inner_text: String::from(" B "),
+                    },
+                ]],
+            },
+        ),
+        (
+            "\
++---+---+
+| A | B |
++---+---+
+| C | D |
++---+---+",
+            Maze {
+                cells: vec![
+                    vec![
+                        Cell {
+                            wall_top: true,
+                            wall_bottom: true,
+                            wall_left: true,
+                            wall_right: true,
+                            corner_top_left: true,
+                            corner_top_right: true,
+                            corner_bottom_left: true,
+                            corner_bottom_right: true,
+                            inner_text: String::from(" A "),
+                        },
+                        Cell {
+                            wall_top: true,
+                            wall_bottom: true,
+                            wall_left: true,
+                            wall_right: true,
+                            corner_top_left: true,
+                            corner_top_right: true,
+                            corner_bottom_left: true,
+                            corner_bottom_right: true,
+                            inner_text: String::from(" B "),
+                        },
+                    ],
+                    vec![
+                        Cell {
+                            wall_top: true,
+                            wall_bottom: true,
+                            wall_left: true,
+                            wall_right: true,
+                            corner_top_left: true,
+                            corner_top_right: true,
+                            corner_bottom_left: true,
+                            corner_bottom_right: true,
+                            inner_text: String::from(" C "),
+                        },
+                        Cell {
+                            wall_top: true,
+                            wall_bottom: true,
+                            wall_left: true,
+                            wall_right: true,
+                            corner_top_left: true,
+                            corner_top_right: true,
+                            corner_bottom_left: true,
+                            corner_bottom_right: true,
+                            inner_text: String::from(" D "),
+                        },
+                    ],
+                ],
+            },
+        ),
+    ];
 
-    let expected = Maze {
-        cells: vec![vec![Cell {
-            wall_top: true,
-            wall_bottom: true,
-            wall_left: true,
-            wall_right: true,
-            corner_top_left: true,
-            corner_top_right: true,
-            corner_bottom_left: true,
-            corner_bottom_right: true,
-            inner_text: String::from(" A "),
-        }]],
-    };
-
-    let parsed = Maze::parse_sm(input).unwrap();
-    assert_eq!(parsed, expected);
+    for (input, expected) in tests {
+        let parsed = Maze::parse_sm(input).unwrap();
+        assert_eq!(parsed, expected);
+    }
 }

@@ -36,20 +36,30 @@ impl Maze {
 
                 row.push(square.join("\n").parse::<Cell>()?);
 
+                parser
+                    .move_lines(-(CELL_LINE_HEIGHT as isize) + 1)
+                    .expect("to be at the starting line");
+
                 if parser.move_cols(CELL_CHAR_WIDTH as isize).is_err() {
                     break;
                 }
+                parser
+                    .move_cols(-1)
+                    .expect("to be on the right edge of previous cell");
             }
 
             cells.push(row);
 
             parser
                 .go_to_pos(starting_pos)
-                .expect("to be able to return to starting position");
+                .expect("to be at the starting position");
 
             if parser.move_lines(CELL_LINE_HEIGHT as isize).is_err() {
                 break;
             }
+            parser
+                .move_lines(-1)
+                .expect("to be on the bottom edge of previous row");
         }
 
         Ok(Maze { cells })
