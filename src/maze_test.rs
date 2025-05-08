@@ -4,6 +4,22 @@ use crate::{cell::Cell, maze::Maze};
 fn test_parse_sm_maze() {
     let tests = vec![
         (
+            " --- \n| A |\n --- ",
+            Maze {
+                cells: vec![vec![Cell {
+                    wall_top: true,
+                    wall_bottom: true,
+                    wall_left: true,
+                    wall_right: true,
+                    corner_top_left: false,
+                    corner_top_right: false,
+                    corner_bottom_left: false,
+                    corner_bottom_right: false,
+                    inner_text: String::from(" A "),
+                }]],
+            },
+        ),
+        (
             "\
 +   +
   A  
@@ -18,6 +34,44 @@ fn test_parse_sm_maze() {
                     corner_top_right: true,
                     corner_bottom_left: true,
                     corner_bottom_right: true,
+                    inner_text: String::from(" A "),
+                }]],
+            },
+        ),
+        (
+            "\
++---+
+  A |
+    +",
+            Maze {
+                cells: vec![vec![Cell {
+                    wall_top: true,
+                    wall_bottom: false,
+                    wall_left: false,
+                    wall_right: true,
+                    corner_top_left: true,
+                    corner_top_right: true,
+                    corner_bottom_left: false,
+                    corner_bottom_right: true,
+                    inner_text: String::from(" A "),
+                }]],
+            },
+        ),
+        (
+            "\
++   +
+  A |
+ --- ",
+            Maze {
+                cells: vec![vec![Cell {
+                    wall_top: false,
+                    wall_bottom: true,
+                    wall_left: false,
+                    wall_right: true,
+                    corner_top_left: true,
+                    corner_top_right: true,
+                    corner_bottom_left: false,
+                    corner_bottom_right: false,
                     inner_text: String::from(" A "),
                 }]],
             },
