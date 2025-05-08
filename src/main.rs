@@ -1,6 +1,8 @@
 pub mod cell;
 pub mod errors;
 pub mod maze;
+#[cfg(test)]
+pub mod maze_test;
 pub mod parser;
 
 use crate::maze::Maze;

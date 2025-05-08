@@ -9,7 +9,7 @@ use crate::{
 
 #[derive(Debug)]
 pub struct Maze {
-    cells: Vec<Vec<Cell>>,
+    pub cells: Vec<Vec<Cell>>,
 }
 
 impl Maze {
@@ -17,7 +17,7 @@ impl Maze {
         Self::from_str(&fs::read_to_string(path)?).map_err(|err| Error::new(err))
     }
 
-    fn parse_sm(s: impl Into<String>) -> Result<Self> {
+    pub fn parse_sm(s: impl Into<String>) -> Result<Self> {
         let content = s.into();
         let lines: Vec<&str> = content.lines().collect();
 
@@ -59,7 +59,7 @@ impl Maze {
         Ok(Maze { cells })
     }
 
-    fn parse_lg(s: impl Into<String>) -> Result<Self> {
+    pub fn parse_lg(s: impl Into<String>) -> Result<Self> {
         let content = s.into();
         let lines: Vec<&str> = content.lines().collect();
 
@@ -119,3 +119,11 @@ impl FromStr for Maze {
             })
     }
 }
+
+impl PartialEq for Maze {
+    fn eq(&self, other: &Self) -> bool {
+        self.cells == other.cells
+    }
+}
+
+impl Eq for Maze {}

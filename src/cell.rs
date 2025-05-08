@@ -11,19 +11,19 @@ pub const CELL_LINE_HEIGHT: usize = CELL_WALL_PIPES + 2;
 #[derive(Clone, Debug, Default)]
 pub struct Cell {
     // Walls
-    wall_top: bool,
-    wall_bottom: bool,
-    wall_left: bool,
-    wall_right: bool,
+    pub wall_top: bool,
+    pub wall_bottom: bool,
+    pub wall_left: bool,
+    pub wall_right: bool,
 
     // Corners
-    corner_top_left: bool,
-    corner_top_right: bool,
-    corner_bottom_left: bool,
-    corner_bottom_right: bool,
+    pub corner_top_left: bool,
+    pub corner_top_right: bool,
+    pub corner_bottom_left: bool,
+    pub corner_bottom_right: bool,
 
     // Inner Text (parsed from chars in center of cell)
-    inner_text: String,
+    pub inner_text: String,
 }
 
 impl FromStr for Cell {
@@ -67,3 +67,19 @@ impl FromStr for Cell {
         })
     }
 }
+
+impl PartialEq for Cell {
+    fn eq(&self, other: &Self) -> bool {
+        self.wall_top == other.wall_top
+            && self.wall_bottom == other.wall_bottom
+            && self.wall_left == other.wall_left
+            && self.wall_right == other.wall_right
+            && self.corner_top_left == other.corner_top_left
+            && self.corner_top_right == other.corner_top_right
+            && self.corner_bottom_left == other.corner_bottom_left
+            && self.corner_bottom_right == other.corner_bottom_right
+            && self.inner_text == other.inner_text
+    }
+}
+
+impl Eq for Cell {}
