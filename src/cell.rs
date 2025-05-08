@@ -2,9 +2,11 @@ use std::str::FromStr;
 
 use anyhow::{anyhow, Error};
 
+// x (cols)
 pub const WALL_DASHES: usize = 3;
 pub const CELL_CHAR_WIDTH: usize = WALL_DASHES + 2;
 
+// y (lines)
 pub const CELL_WALL_PIPES: usize = 1;
 pub const CELL_LINE_HEIGHT: usize = CELL_WALL_PIPES + 2;
 

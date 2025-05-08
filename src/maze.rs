@@ -5,6 +5,7 @@ use anyhow::{anyhow, Error, Result};
 use crate::{
     cell::{Cell, CELL_CHAR_WIDTH, CELL_LINE_HEIGHT},
     errors::ParseMazeError,
+    parser::ContentParser,
 };
 
 #[derive(Debug)]
@@ -18,42 +19,37 @@ impl Maze {
     }
 
     pub fn parse_sm(s: impl Into<String>) -> Result<Self> {
-        let content = s.into();
-        let lines: Vec<&str> = content.lines().collect();
-
-        if lines.len() < CELL_LINE_HEIGHT {
-            return Err(anyhow!(
-                "Invalid maze: Expected number of lines to be greater than {}, but got: {}",
-                CELL_LINE_HEIGHT,
-                lines.len(),
-            ));
-        }
-
-        let line_length = lines[0].len();
-
-        // Calculate the number of rows and columns of cells
-        let rows = (lines.len() - 1) / CELL_LINE_HEIGHT;
-        let cols = (line_length - 1) / CELL_CHAR_WIDTH;
-
-        // Parse each cell and assemble the maze
+        let mut parser = ContentParser::new(s.into());
         let mut cells = Vec::new();
-        for row in 0..rows {
-            let mut cell_row = Vec::new();
-            for col in 0..cols {
-                // Extract the "square" for the current cell, including overlapping walls
-                let cell_str = (0..CELL_LINE_HEIGHT)
-                    .map(|i| {
-                        &lines[row * CELL_LINE_HEIGHT + i]
-                            [col * CELL_CHAR_WIDTH..=(col + 1) * CELL_CHAR_WIDTH]
-                    })
-                    .collect::<Vec<&str>>()
-                    .join("\n");
 
-                // Parse the cell
-                let cell = cell_str.parse::<Cell>()?;
-                cell_row.push(cell);
+        while parser.curr_char().is_ok() {
+            let starting_pos = parser.curr_pos();
+            let mut row = Vec::new();
+
+            loop {
+                let mut square = vec![parser.slice(CELL_CHAR_WIDTH)?];
+
+                for _ in 0..CELL_LINE_HEIGHT - 1 {
+                    parser.next_line()?;
+                    square.push(parser.slice(CELL_CHAR_WIDTH)?);
+                }
+
+                row.push(square.join("\n").parse::<Cell>()?);
+
+                if parser.move_cols(CELL_CHAR_WIDTH as isize).is_err() {
+                    break;
+                }
             }
-            cells.push(cell_row);
+
+            cells.push(row);
+
+            parser
+                .go_to_pos(starting_pos)
+                .expect("to be able to return to starting position");
+
+            if parser.move_lines(CELL_LINE_HEIGHT as isize).is_err() {
+                break;
+            }
         }
 
         Ok(Maze { cells })
