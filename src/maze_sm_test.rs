@@ -1,7 +1,7 @@
 use crate::{cell::Cell, maze::Maze};
 
 #[test]
-fn test_parse_sm_maze() {
+fn test_parse_valid_sm_mazes() {
     let tests = vec![
         (
             " --- \n| A |\n --- ",
@@ -125,6 +125,126 @@ fn test_parse_sm_maze() {
                         inner_text: String::from(" B "),
                     },
                 ]],
+            },
+        ),
+        (
+            "\
++   +---+
+  A | B |
++---+---+
+| C | D  
++---+    ",
+            Maze {
+                cells: vec![
+                    vec![
+                        Cell {
+                            wall_top: false,
+                            wall_bottom: true,
+                            wall_left: false,
+                            wall_right: true,
+                            corner_top_left: true,
+                            corner_top_right: true,
+                            corner_bottom_left: true,
+                            corner_bottom_right: true,
+                            inner_text: String::from(" A "),
+                        },
+                        Cell {
+                            wall_top: true,
+                            wall_bottom: true,
+                            wall_left: true,
+                            wall_right: true,
+                            corner_top_left: true,
+                            corner_top_right: true,
+                            corner_bottom_left: true,
+                            corner_bottom_right: true,
+                            inner_text: String::from(" B "),
+                        },
+                    ],
+                    vec![
+                        Cell {
+                            wall_top: true,
+                            wall_bottom: true,
+                            wall_left: true,
+                            wall_right: true,
+                            corner_top_left: true,
+                            corner_top_right: true,
+                            corner_bottom_left: true,
+                            corner_bottom_right: true,
+                            inner_text: String::from(" C "),
+                        },
+                        Cell {
+                            wall_top: true,
+                            wall_bottom: false,
+                            wall_left: true,
+                            wall_right: false,
+                            corner_top_left: true,
+                            corner_top_right: true,
+                            corner_bottom_left: true,
+                            corner_bottom_right: false,
+                            inner_text: String::from(" D "),
+                        },
+                    ],
+                ],
+            },
+        ),
+        (
+            "\
++---+---+
+| A | B |
++---+---+
+| C | D  
++---+    ",
+            Maze {
+                cells: vec![
+                    vec![
+                        Cell {
+                            wall_top: true,
+                            wall_bottom: true,
+                            wall_left: true,
+                            wall_right: true,
+                            corner_top_left: true,
+                            corner_top_right: true,
+                            corner_bottom_left: true,
+                            corner_bottom_right: true,
+                            inner_text: String::from(" A "),
+                        },
+                        Cell {
+                            wall_top: true,
+                            wall_bottom: true,
+                            wall_left: true,
+                            wall_right: true,
+                            corner_top_left: true,
+                            corner_top_right: true,
+                            corner_bottom_left: true,
+                            corner_bottom_right: true,
+                            inner_text: String::from(" B "),
+                        },
+                    ],
+                    vec![
+                        Cell {
+                            wall_top: true,
+                            wall_bottom: true,
+                            wall_left: true,
+                            wall_right: true,
+                            corner_top_left: true,
+                            corner_top_right: true,
+                            corner_bottom_left: true,
+                            corner_bottom_right: true,
+                            inner_text: String::from(" C "),
+                        },
+                        Cell {
+                            wall_top: true,
+                            wall_bottom: false,
+                            wall_left: true,
+                            wall_right: false,
+                            corner_top_left: true,
+                            corner_top_right: true,
+                            corner_bottom_left: true,
+                            corner_bottom_right: false,
+                            inner_text: String::from(" D "),
+                        },
+                    ],
+                ],
             },
         ),
         (
