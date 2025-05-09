@@ -314,3 +314,8 @@ fn test_parse_valid_sm_mazes() {
         assert_eq!(parsed, expected);
     }
 }
+
+#[test]
+fn test_parse_invalid_sm_mazes() {
+    // TODO: ...
+}

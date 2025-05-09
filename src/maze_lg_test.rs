@@ -439,3 +439,8 @@ fn test_parse_valid_lg_mazes() {
         assert_eq!(parsed, expected);
     }
 }
+
+#[test]
+fn test_parse_invalid_lg_mazes() {
+    // TODO: ...
+}
