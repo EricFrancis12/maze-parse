@@ -8,7 +8,7 @@ use crate::{
     parser::ContentParser,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub struct Maze {
     pub cells: Vec<Vec<Cell>>,
 }
@@ -98,11 +98,3 @@ impl FromStr for Maze {
             })
     }
 }
-
-impl PartialEq for Maze {
-    fn eq(&self, other: &Self) -> bool {
-        self.cells == other.cells
-    }
-}
-
-impl Eq for Maze {}

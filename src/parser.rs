@@ -1,6 +1,6 @@
 use std::usize;
 
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 
 pub struct ContentParser {
     content: String,
@@ -26,7 +26,7 @@ impl ContentParser {
             || self.line > lines.len()
             || self.col > lines[self.line - 1].len()
         {
-            return Err(anyhow::anyhow!(
+            return Err(anyhow!(
                 "Invalid position: Out of bounds (line {}, col {}).",
                 self.line,
                 self.col,
@@ -46,13 +46,13 @@ impl ContentParser {
         let lines: Vec<&str> = self.content.lines().collect();
 
         if line == 0 || col == 0 {
-            return Err(anyhow::anyhow!(
+            return Err(anyhow!(
                 "Invalid position: line and column must be greater than 0.",
             ));
         }
 
         if line > lines.len() || col > lines[line - 1].len() {
-            return Err(anyhow::anyhow!(
+            return Err(anyhow!(
                 "Invalid position: Out of bounds (line {}, col {})",
                 line,
                 col,
@@ -78,7 +78,7 @@ impl ContentParser {
     /// Move to the previous column
     pub fn prev_col(&mut self) -> Result<char> {
         if self.col == 1 {
-            return Err(anyhow::anyhow!("Cannot move to a column less than 1."));
+            return Err(anyhow!("Cannot move to a column less than 1."));
         }
         self.go_to(self.line, self.col - 1)
     }
@@ -91,7 +91,7 @@ impl ContentParser {
     /// Move to the previous line
     pub fn prev_line(&mut self) -> Result<char> {
         if self.line == 1 {
-            return Err(anyhow::anyhow!("Cannot move to a line less than 1."));
+            return Err(anyhow!("Cannot move to a line less than 1."));
         }
         self.go_to(self.line - 1, self.col)
     }
@@ -113,7 +113,7 @@ impl ContentParser {
     pub fn move_cols(&mut self, n: isize) -> Result<()> {
         let lines: Vec<&str> = self.content.lines().collect();
         if self.line == 0 || self.line > lines.len() {
-            return Err(anyhow::anyhow!(
+            return Err(anyhow!(
                 "Invalid move: Current line {} is out of bounds.",
                 self.line,
             ));
@@ -122,7 +122,7 @@ impl ContentParser {
         let line_length = lines[self.line - 1].len();
         let new_col = (self.col as isize + n) as usize;
         if new_col == 0 || new_col > line_length {
-            return Err(anyhow::anyhow!(
+            return Err(anyhow!(
                 "Invalid move: Column {} is out of bounds.",
                 new_col,
             ));
@@ -136,10 +136,7 @@ impl ContentParser {
     pub fn move_lines(&mut self, n: isize) -> Result<()> {
         let new_line = (self.line as isize + n) as usize;
         if new_line == 0 || new_line > self.content.lines().count() {
-            return Err(anyhow::anyhow!(
-                "Invalid move: Line {} is out of bounds.",
-                new_line,
-            ));
+            return Err(anyhow!("Invalid move: Line {} is out of bounds.", new_line));
         }
         self.line = new_line;
         Ok(())
@@ -152,10 +149,7 @@ impl ContentParser {
         // Move lines first
         let new_line = (self.line as isize + n_lines) as usize;
         if new_line == 0 || new_line > self.content.lines().count() {
-            return Err(anyhow::anyhow!(
-                "Invalid move: Line {} is out of bounds.",
-                new_line,
-            ));
+            return Err(anyhow!("Invalid move: Line {} is out of bounds.", new_line));
         }
 
         // Move columns
@@ -163,7 +157,7 @@ impl ContentParser {
         let line_length = lines[new_line - 1].len();
         let new_col = (self.col as isize + n_cols) as usize;
         if new_col == 0 || new_col > line_length {
-            return Err(anyhow::anyhow!(
+            return Err(anyhow!(
                 "Invalid move: Column {} is out of bounds.",
                 new_col,
             ));
@@ -182,7 +176,7 @@ impl ContentParser {
 
         // Ensure the current position is valid
         if self.line == 0 || self.line > lines.len() {
-            return Err(anyhow::anyhow!(
+            return Err(anyhow!(
                 "Invalid position: Line {} is out of bounds.",
                 self.line,
             ));
@@ -190,7 +184,7 @@ impl ContentParser {
 
         let line = lines[self.line - 1];
         if self.col == 0 || self.col > line.len() {
-            return Err(anyhow::anyhow!(
+            return Err(anyhow!(
                 "Invalid position: Column {} is out of bounds.",
                 self.col,
             ));
@@ -199,7 +193,7 @@ impl ContentParser {
         // Ensure the slice does not exceed the line's length
         let end_col = self.col + width - 1;
         if end_col > line.len() {
-            return Err(anyhow::anyhow!(
+            return Err(anyhow!(
                 "Invalid slice: End column {} exceeds line length {}.",
                 end_col,
                 line.len(),
