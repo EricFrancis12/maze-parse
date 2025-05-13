@@ -31,36 +31,39 @@ impl Maze {
         let mut cells = Vec::new();
 
         while parser.curr_char().is_ok() {
-            let starting_pos = parser.curr_pos();
+            let row_start = parser.curr_pos();
             let mut row = Vec::new();
 
             loop {
-                let mut square = vec![parser.slice(CELL_CHAR_WIDTH)?];
+                let cell_lines = (0..CELL_LINE_HEIGHT)
+                    .map(|i| {
+                        if i > 0 {
+                            parser.next_line()?;
+                        }
+                        parser.slice(CELL_CHAR_WIDTH)
+                    })
+                    .collect::<Result<Vec<String>>>()?;
 
-                for _ in 0..CELL_LINE_HEIGHT - 1 {
-                    parser.next_line()?;
-                    square.push(parser.slice(CELL_CHAR_WIDTH)?);
-                }
-
-                row.push(square.join("\n").parse::<Cell>()?);
+                row.push(cell_lines.join("\n").parse::<Cell>()?);
 
                 parser
                     .move_lines(-(CELL_LINE_HEIGHT as isize) + 1)
-                    .expect("to be at the starting line");
+                    .expect("should be at the start of cell row");
 
                 if parser.move_cols(CELL_CHAR_WIDTH as isize + offset).is_err() {
                     break;
                 }
+
                 parser
                     .move_cols(-1)
-                    .expect("to be on the right edge of previous cell");
+                    .expect("should be on the right edge of previous cell");
             }
 
             cells.push(row);
 
             parser
-                .go_to_pos(starting_pos)
-                .expect("to be at the starting position");
+                .go_to_pos(row_start)
+                .expect("should return to start of current row");
 
             if parser
                 .move_lines(CELL_LINE_HEIGHT as isize + offset)
@@ -68,9 +71,10 @@ impl Maze {
             {
                 break;
             }
+
             parser
                 .move_lines(-1)
-                .expect("to be on the bottom edge of previous row");
+                .expect("should be at the bottom edge of the row");
         }
 
         Ok(Maze { cells })
